@@ -26,7 +26,7 @@ public class HashTable<K, V> {
 	}
 	ArrayList<LinkedList<Pair>> table = new ArrayList<LinkedList<Pair>>();
 	private static final int BUCKET_SIZE = 6;
-	
+
 	public HashTable() {
 		// initialize BUCKET_SIZE buckets
 		for (int i=0;i<BUCKET_SIZE;i++)
@@ -63,11 +63,11 @@ public class HashTable<K, V> {
 	 */
 	public V get(K key) {
 		for (Pair element : table.get(getIndex(key)))
-			if (element.key == key)
+			if (element.key.equals(key))
 				return element.v;
 		return null;
 	}
-	
+
 	/**
 	 * Replaces the element with the key value by a new element. Nothing is
 	 * changed if the element with the specified key value does not exist.
@@ -92,7 +92,7 @@ public class HashTable<K, V> {
 	public boolean contains(K key) {
 		return table.get(getIndex(key)).contains(new Pair(key,null));
 	}
-	
+
 	/**
 	 * Removes an element from the table. Nothing is changed if it does
 	 * not exist.
