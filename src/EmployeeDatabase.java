@@ -5,6 +5,36 @@ public class EmployeeDatabase {
         /**
          * @param args
          */
+        public static void archive(HashTable<Integer, Employee> employees, PrintWriter out){
+            for(int i = 0; i < 1000000; i++){
+            if(employees.contains(i)){
+                    out.print(employees.get(i).getEmpNumber() + " ");
+                    out.print(employees.get(i).getSex() + " ");
+                    out.print(employees.get(i).getfName() + " ");
+                    out.print(employees.get(i).getlName() + " ");
+                    out.print(employees.get(i).getDeductionsRate() + " ");
+                    if(employees.get(i) instanceof FullTimeEmployee){
+                        FullTimeEmployee fte = (FullTimeEmployee)(employees.get(i));
+                        out.print("f");
+                        out.println();
+                        out.print(fte.getYearlySalary() );
+                    }    
+                    else if(employees.get(i) instanceof PartTimeEmployee) {
+                        
+                        PartTimeEmployee fte = (PartTimeEmployee)(employees.get(i));
+                        out.print("p");
+                        out.println();
+                        out.print(fte.getHourlyWage() + " ");
+                        out.print(fte.getHrsPerWeek() + " ");
+                        out.print(fte.getWeeksPerYear() + " ");
+                    } 
+                    out.println();  
+                    out.println();    
+                }
+                    
+            }
+                
+        }
         public static HashTable<Integer, Employee> open (Scanner in) {
                 HashTable<Integer, Employee> employees = new HashTable<Integer, Employee>();
                 int empNumber;
@@ -15,7 +45,6 @@ public class EmployeeDatabase {
                         sex = in.next();
                         fName = in.next();
                         lName = in.next();
-                        System.out.println(lName);
                         deductionsRate = in.nextDouble();
                         type = in.next();
                         if (type.equals("f")){
@@ -69,11 +98,11 @@ public class EmployeeDatabase {
                 else if (type.equals("p")){
                         double hourlyWage;
                         int hoursPerWeek, weeksPerYear;
-                        System.out.print("What is the hourly wage?");
+                        System.out.print("What is the hourly wage?: ");
                         hourlyWage = stdIn.nextDouble();
-                        System.out.print("What is the hours per week?");
+                        System.out.print("How many hours are worked per week?: ");
                         hoursPerWeek = stdIn.nextInt();
-                        System.out.print("How many weeks is worked per year?");
+                        System.out.print("How many weeks is worked per year?: ");
                         weeksPerYear = stdIn.nextInt();
                         PartTimeEmployee employee = new PartTimeEmployee(empNumber, sex, fName, lName, hourlyWage, deductionsRate, hoursPerWeek, weeksPerYear);
                         employees.add(empNumber, employee);
@@ -115,45 +144,104 @@ public class EmployeeDatabase {
                 Random rand = new Random();
 
                 while(true){
+                        System.out.println("Available commands: add, remove, exit");
                         inString = stdIn.nextLine();
                         if (inString.equals("add")) 
                             employees = add(employees, stdIn, rand);
                         else if(inString.equals("remove"))
                             employees = remove(employees, stdIn);
+                        else if(inString.equals("exit")) break;
                         
                 }
+                PrintWriter out = new PrintWriter(new FileWriter(fileName), true);
+                archive(employees, out);
+                out.close();
+                stdIn.close();
+                inFile.close();
         }
 
 
 }
 
 abstract class Employee{
+
         protected int empNumber;
         protected String sex, fName, lName;
         protected double deductionsRate;
+        public double getDeductionsRate() {
+            return deductionsRate;
+        }
+
+        public int getEmpNumber() {
+            return empNumber;
+        }
+
+        public String getfName() {
+            return fName;
+        }
+
+        public String getlName() {
+            return lName;
+        }
+
+        public String getSex() {
+            return sex;
+        }
+
 
 }
 class FullTimeEmployee extends Employee{
         private double yearlySalary, netYearlySalary;
+
+
         public FullTimeEmployee(int empNumber, String sex, String fName, String lName, double yearlySalary, double deductionsRate){
                 this.empNumber = empNumber;
                 this.sex = sex;
                 this.fName = fName;
                 this.lName = lName;
+
                 this.yearlySalary = yearlySalary;
                 this.deductionsRate = deductionsRate;
                 netYearlySalary = ((1-deductionsRate/100)*yearlySalary);
         }
 
 
+    public double getYearlySalary() {
+        return yearlySalary;
+    }
+
+
+
 }
 class PartTimeEmployee extends Employee{
-        private double hourlyWage, hrsPerWeek, weeksPerYear, annualGrossPay, annualNetPay;
+        private double hourlyWage, hrsPerWeek, annualGrossPay, annualNetPay;
+        private int weeksPerYear;
+
+        public double getAnnualGrossPay() {
+            return annualGrossPay;
+        }
+
+        public double getAnnualNetPay() {
+            return annualNetPay;
+        }
+
+        public double getHourlyWage() {
+            return hourlyWage;
+        }
+
+        public double getHrsPerWeek() {
+            return hrsPerWeek;
+        }
+
+        public int getWeeksPerYear() {
+            return weeksPerYear;
+        }
         public PartTimeEmployee(int empNumber, String sex, String fName, String lName, double hourlyWage, double deductionsRate, double hrsPerWeek, int weeksPerYear){
                 this.empNumber = empNumber;
                 this.sex = sex;
                 this.fName = fName;
                 this.lName = lName;
+
                 this.hourlyWage = hourlyWage;
                 this.deductionsRate = deductionsRate;
                 this.hrsPerWeek = hrsPerWeek;
