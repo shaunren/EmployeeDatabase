@@ -1,3 +1,4 @@
+package employeedatabase;
 import java.util.*;
 import java.io.*;
 public class EmployeeDatabase {
@@ -5,23 +6,54 @@ public class EmployeeDatabase {
         /**
          * @param args
          */
+        public static void info(HashTable<Integer, Employee> employees, Scanner stdIn){
+            System.out.print("What is the employee number: ");
+            int empNumber = Integer.parseInt(stdIn.nextLine());
+            if(employees.contains(empNumber)){
+                Employee e = employees.get(empNumber);
+                System.out.println("Employee is: ");
+                if(e.getSex().equals("m"))
+                    System.out.println("Male");
+                else System.out.println("Female");
+                System.out.println("First Name: " + e.getfName());
+                System.out.println("Last Name: " + e.getlName());
+                System.out.println("Deductions rate is: %" + e.getDeductionsRate());
+                if(employees.get(empNumber) instanceof FullTimeEmployee){
+                    FullTimeEmployee fte = (FullTimeEmployee)(e);
+                    System.out.println("Gross salary is: " + fte.getYearlySalary());
+                    System.out.println("Net salary is: " + fte.getNetYearlySalary());
+                    
+                }
+                else {
+                    PartTimeEmployee pte = (PartTimeEmployee)(e);
+                    System.out.println("Hourly wage: " + pte.getHourlyWage());
+                    System.out.println("Hours worked per week: " + pte.getHrsPerWeek());
+                    System.out.println("Weeks worked per year: " + pte.getWeeksPerYear());
+                    System.out.println("Annual gross pay is: $" + pte.getAnnualGrossPay());
+                    System.out.println("Annual net pay is: $" + pte.getAnnualNetPay());
+                }
+            }
+            else System.out.println("Employee not found.");
+            
+        }
         public static void archive(HashTable<Integer, Employee> employees, PrintWriter out){
             for(int i = 0; i < 1000000; i++){
             if(employees.contains(i)){
-                    out.print(employees.get(i).getEmpNumber() + " ");
-                    out.print(employees.get(i).getSex() + " ");
-                    out.print(employees.get(i).getfName() + " ");
-                    out.print(employees.get(i).getlName() + " ");
-                    out.print(employees.get(i).getDeductionsRate() + " ");
-                    if(employees.get(i) instanceof FullTimeEmployee){
-                        FullTimeEmployee fte = (FullTimeEmployee)(employees.get(i));
+                    Employee e = employees.get(i);
+                    out.print(e.getEmpNumber() + " ");
+                    out.print(e.getSex() + " ");
+                    out.print(e.getfName() + " ");
+                    out.print(e.getlName() + " ");
+                    out.print(e.getDeductionsRate() + " ");
+                    if(e instanceof FullTimeEmployee){
+                        FullTimeEmployee fte = (FullTimeEmployee)(e);
                         out.print("f");
                         out.println();
                         out.print(fte.getYearlySalary() );
                     }    
-                    else if(employees.get(i) instanceof PartTimeEmployee) {
+                    else if(e instanceof PartTimeEmployee) {
                         
-                        PartTimeEmployee fte = (PartTimeEmployee)(employees.get(i));
+                        PartTimeEmployee fte = (PartTimeEmployee)(e);
                         out.print("p");
                         out.println();
                         out.print(fte.getHourlyWage() + " ");
@@ -144,12 +176,14 @@ public class EmployeeDatabase {
                 Random rand = new Random();
 
                 while(true){
-                        System.out.println("Available commands: add, remove, exit");
+                        System.out.println("Available commands: add, remove, info, exit");
                         inString = stdIn.nextLine();
                         if (inString.equals("add")) 
                             employees = add(employees, stdIn, rand);
                         else if(inString.equals("remove"))
                             employees = remove(employees, stdIn);
+                        else if(inString.equals("info"))
+                            info(employees, stdIn);
                         else if(inString.equals("exit")) break;
                         
                 }
@@ -191,6 +225,10 @@ abstract class Employee{
 
 }
 class FullTimeEmployee extends Employee{
+
+    public double getNetYearlySalary() {
+        return netYearlySalary;
+    }
         private double yearlySalary, netYearlySalary;
 
 
