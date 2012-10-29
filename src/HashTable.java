@@ -1,3 +1,4 @@
+package employeedatabase;
 import java.util.*;
 
 /**
@@ -77,7 +78,7 @@ public class HashTable<K, V> {
 	 */
 	public void replace(K key, V newv) {
 		for (Pair element : table.get(getIndex(key)))
-			if (element.key == key) {
+			if (element.key.equals(key)) {
 				element.v = newv;
 				return;
 			}
