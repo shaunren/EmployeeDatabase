@@ -109,7 +109,7 @@ public class MainForm extends javax.swing.JFrame {
         jSplitPane1 = new javax.swing.JSplitPane();
         sexGroup = new javax.swing.ButtonGroup();
         typeGroup = new javax.swing.ButtonGroup();
-        jButton1 = new javax.swing.JButton();
+        applyButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         listEmployees = new javax.swing.JList();
         maleRadio = new javax.swing.JRadioButton();
@@ -152,10 +152,10 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Set");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        applyButton.setText("Apply");
+        applyButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                applyButtonActionPerformed(evt);
             }
         });
 
@@ -288,42 +288,38 @@ public class MainForm extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(64, 64, 64)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel8)
+                    .addComponent(grossAnnualSalaryLabel)
+                    .addComponent(weeksWorkedLabel)
+                    .addComponent(hoursWorkedLabel)
+                    .addComponent(hourlyWageLabel)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(64, 64, 64)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel8)
-                            .addComponent(grossAnnualSalaryLabel)
-                            .addComponent(weeksWorkedLabel)
-                            .addComponent(hoursWorkedLabel)
-                            .addComponent(hourlyWageLabel)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel2))
+                        .addComponent(femaleRadio)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(femaleRadio)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(maleRadio))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(lastNameBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(hoursWorkedBox, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(weeksWorkedBox, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(grossSalaryBox, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(netSalaryBox, javax.swing.GroupLayout.Alignment.LEADING))
-                            .addComponent(deductionsRateBox, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(hourlyWageBox, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(partTimeRadio)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(fullTimeRadio))
-                            .addComponent(firstNameBox, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(108, Short.MAX_VALUE))
+                        .addComponent(maleRadio))
+                    .addComponent(deductionsRateBox, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(hourlyWageBox, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1)
-                        .addGap(163, 163, 163))))
+                        .addComponent(partTimeRadio)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fullTimeRadio))
+                    .addComponent(firstNameBox, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(applyButton)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(lastNameBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(hoursWorkedBox, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(weeksWorkedBox, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(grossSalaryBox, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(netSalaryBox, javax.swing.GroupLayout.Alignment.LEADING))))
+                .addContainerGap(108, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -363,7 +359,7 @@ public class MainForm extends javax.swing.JFrame {
                             .addComponent(weeksWorkedLabel)
                             .addComponent(weeksWorkedBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)
+                        .addComponent(applyButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(grossAnnualSalaryLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -382,7 +378,7 @@ public class MainForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void newFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newFileActionPerformed
-        jButton1.setText("av");        // TODO add your handling code here:
+        applyButton.setText("av");        // TODO add your handling code here:
     }//GEN-LAST:event_newFileActionPerformed
     DefaultListModel listModel = new DefaultListModel();
     HashSet<Integer> usedEmployeeNums = new HashSet<>(); 
@@ -555,9 +551,22 @@ public class MainForm extends javax.swing.JFrame {
 
     }//GEN-LAST:event_saveFileActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
+        Employee used = employees.get((Integer)listEmployees.getSelectedValue());
+        used.setfName(firstNameBox.getText());
+        used.setlName(lastNameBox.getText());
+        used.setSex(maleRadio.isSelected() ? "m" : "f");
+        used.setDeductionsRate(Double.parseDouble(deductionsRateBox.getText()));
+        if(used instanceof PartTimeEmployee){
+            ((PartTimeEmployee)used).setHourlyWage(Double.parseDouble(hourlyWageBox.getText()));
+            ((PartTimeEmployee)used).setHrsPerWeek(Double.parseDouble(hoursWorkedBox.getText()));
+            ((PartTimeEmployee)used).setWeeksPerYear(Integer.parseInt(weeksWorkedBox.getText()));
+        }
+        else {
+            ((FullTimeEmployee)used).setYearlySalary(Double.parseDouble(grossSalaryBox.getText()));
+        }
+        listEmployees.setSelectedIndex(listEmployees.getSelectedIndex());
+    }//GEN-LAST:event_applyButtonActionPerformed
 
     private void hourlyWageBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hourlyWageBoxActionPerformed
         // TODO add your handling code here:
@@ -606,6 +615,7 @@ public class MainForm extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton applyButton;
     private javax.swing.JTextField deductionsRateBox;
     private javax.swing.JMenuItem exitForm;
     private javax.swing.JRadioButton femaleRadio;
@@ -618,7 +628,6 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JLabel hourlyWageLabel;
     private javax.swing.JTextField hoursWorkedBox;
     private javax.swing.JLabel hoursWorkedLabel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -642,11 +651,33 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JLabel weeksWorkedLabel;
     // End of variables declaration//GEN-END:variables
 }
+
+
 abstract class Employee {
 
     protected int empNumber;
     protected String sex, fName, lName;
     protected double deductionsRate;
+
+    public void setEmpNumber(int empNumber) {
+        this.empNumber = empNumber;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public void setfName(String fName) {
+        this.fName = fName;
+    }
+
+    public void setlName(String lName) {
+        this.lName = lName;
+    }
+
+    public void setDeductionsRate(double deductionsRate) {
+        this.deductionsRate = deductionsRate;
+    }
 
     public double getDeductionsRate() {
         return deductionsRate;
@@ -668,11 +699,10 @@ abstract class Employee {
         return sex;
     }
 }
-
 class FullTimeEmployee extends Employee {
 
     public double getNetYearlySalary() {
-        return netYearlySalary;
+        return ((1 - deductionsRate / 100) * yearlySalary);
     }
     private double yearlySalary, netYearlySalary;
 
@@ -690,12 +720,38 @@ class FullTimeEmployee extends Employee {
     public double getYearlySalary() {
         return yearlySalary;
     }
+
+    public void setYearlySalary(double yearlySalary) {
+        this.yearlySalary = yearlySalary;
+    }
+    
 }
 
 class PartTimeEmployee extends Employee {
 
     private double hourlyWage, hrsPerWeek, annualGrossPay, annualNetPay;
     private int weeksPerYear;
+
+
+    public void setHourlyWage(double hourlyWage) {
+        this.hourlyWage = hourlyWage;
+    }
+
+    public void setHrsPerWeek(double hrsPerWeek) {
+        this.hrsPerWeek = hrsPerWeek;
+    }
+
+    public void setAnnualGrossPay(double annualGrossPay) {
+        this.annualGrossPay = annualGrossPay;
+    }
+
+    public void setAnnualNetPay(double annualNetPay) {
+        this.annualNetPay = annualNetPay;
+    }
+
+    public void setWeeksPerYear(int weeksPerYear) {
+        this.weeksPerYear = weeksPerYear;
+    }   
 
     public double getAnnualGrossPay() {
         return annualGrossPay;
