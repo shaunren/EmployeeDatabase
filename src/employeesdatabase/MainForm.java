@@ -640,7 +640,10 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_addItemActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        // TODO add your handling code here:
+        listModel.removeElement(listEmployees.getSelectedValue());
+        employees.remove((Integer)listEmployees.getSelectedValue());
+        listEmployees.setModel(listModel);
+        
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void partTimeRadioStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_partTimeRadioStateChanged
