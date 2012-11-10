@@ -1,0 +1,8 @@
+-fix edit feature for from full time to part time and back
+-add an add feature
+-delete feature
+-fix new file feaature
+-fix opening multiple times
+-remove random debug text (av)
+-remove useless methods that i dont know how to delete
+-write prompts and shit for exceptions

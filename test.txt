@@ -1,6 +1,6 @@
 24930 m  Shaun RENkoo 50.0 f
 120.1
 
-323124 M  Abhishek Magnet 10.5 p
-40.0 20.5 32 
+323124 f  Abhishek Magnet 10.5 p
+40.0 20.5 310 
 
