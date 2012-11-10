@@ -139,7 +139,7 @@ public class MainForm extends javax.swing.JFrame {
         exitForm = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         addItem = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        removeItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("EmployeeDatabase");
@@ -297,15 +297,15 @@ public class MainForm extends javax.swing.JFrame {
         });
         jMenu2.add(addItem);
 
-        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
-        jMenuItem2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/employeesdatabase/delete.png"))); // NOI18N
-        jMenuItem2.setText("Delete");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        removeItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
+        removeItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/employeesdatabase/delete.png"))); // NOI18N
+        removeItem.setText("Delete");
+        removeItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                removeItemActionPerformed(evt);
             }
         });
-        jMenu2.add(jMenuItem2);
+        jMenu2.add(removeItem);
 
         jMenuBar1.add(jMenu2);
 
@@ -416,8 +416,7 @@ public class MainForm extends javax.swing.JFrame {
     String fileName = null;
     File file = null;
     PrintWriter fileOut = null;
-    HashTable<Integer, Employee> employees = null;
-    DefaultButtonModel sexButtonModel = new DefaultButtonModel();
+    HashTable<Integer, Employee> employees = new HashTable<>();
 
     private void openFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileActionPerformed
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -634,17 +633,16 @@ public class MainForm extends javax.swing.JFrame {
         PartTimeEmployee emp = new PartTimeEmployee(i);
         employees.add(i,emp);
         listModel.add(usedEmployeeNums.size()-1, i);
-        
-        listEmployees.setModel(listModel);
         listEmployees.setSelectedIndex(usedEmployeeNums.size()-1);
     }//GEN-LAST:event_addItemActionPerformed
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        listModel.removeElement(listEmployees.getSelectedValue());
-        employees.remove((Integer)listEmployees.getSelectedValue());
-        listEmployees.setModel(listModel);
+    private void removeItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeItemActionPerformed
         
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+        System.out.println(listEmployees.getSelectedValue());
+        employees.remove((Integer)listEmployees.getSelectedValue());
+        listModel.removeElement(listEmployees.getSelectedValue());
+        
+    }//GEN-LAST:event_removeItemActionPerformed
 
     private void partTimeRadioStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_partTimeRadioStateChanged
         // TODO add your handling code here:
@@ -698,7 +696,6 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTextField lastNameBox;
@@ -708,6 +705,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem newFile;
     private javax.swing.JMenuItem openFile;
     private javax.swing.JRadioButton partTimeRadio;
+    private javax.swing.JMenuItem removeItem;
     private javax.swing.JMenuItem saveFile;
     private javax.swing.ButtonGroup sexGroup;
     private javax.swing.ButtonGroup typeGroup;
