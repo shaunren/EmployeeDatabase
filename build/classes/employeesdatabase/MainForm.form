@@ -76,7 +76,7 @@
             <Property name="text" type="java.lang.String" value="Edit"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
+            <MenuItem class="javax.swing.JMenuItem" name="addItem">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="INSERT"/>
@@ -87,7 +87,7 @@
                 <Property name="text" type="java.lang.String" value="Add"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem1ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addItemActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem2">
@@ -153,18 +153,8 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="femaleRadio" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="maleRadio" min="-2" max="-2" attributes="0"/>
-                  </Group>
                   <Component id="deductionsRateBox" min="-2" pref="80" max="-2" attributes="0"/>
                   <Component id="hourlyWageBox" min="-2" pref="80" max="-2" attributes="0"/>
-                  <Group type="102" attributes="0">
-                      <Component id="partTimeRadio" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="fullTimeRadio" min="-2" max="-2" attributes="0"/>
-                  </Group>
                   <Component id="firstNameBox" min="-2" pref="80" max="-2" attributes="0"/>
                   <Group type="103" alignment="0" groupAlignment="1" attributes="0">
                       <Component id="applyButton" min="-2" max="-2" attributes="0"/>
@@ -174,6 +164,17 @@
                           <Component id="weeksWorkedBox" alignment="0" max="32767" attributes="0"/>
                           <Component id="grossSalaryBox" alignment="0" max="32767" attributes="0"/>
                           <Component id="netSalaryBox" alignment="0" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="partTimeRadio" min="-2" max="-2" attributes="0"/>
+                          <Component id="maleRadio" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="femaleRadio" min="-2" max="-2" attributes="0"/>
+                          <Component id="fullTimeRadio" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -323,6 +324,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Part Time"/>
       </Properties>
+      <Events>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="partTimeRadioStateChanged"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JRadioButton" name="fullTimeRadio">
       <Properties>
