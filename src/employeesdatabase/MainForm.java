@@ -4,6 +4,7 @@
  */
 package employeesdatabase;
 
+import java.awt.Component;
 import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
@@ -16,12 +17,17 @@ import javax.swing.*;
  */
 public class MainForm extends javax.swing.JFrame {
 
+    DefaultListModel listModel = new DefaultListModel();
+    HashSet<Integer> usedEmployeeNums = new HashSet<>();
+    File file = new File("database.txt");
+    HashTable<Integer, Employee> employees = new HashTable<>();
+    
     public static void archive(HashTable<Integer, Employee> employees, HashSet<Integer> usedEmployeeNums, PrintWriter out) {
         for (int i : usedEmployeeNums) {
             if (employees.contains(i)) {
                 Employee e = employees.get(i);
                 out.print(e.getEmpNumber() + " ");
-                out.print(e.getSex() + "  ");
+                out.print(e.getSex() ? "f " : "m ");
                 out.print(e.getfName() + " ");
                 out.print(e.getlName() + " ");
                 out.print(e.getDeductionsRate() + " ");
@@ -42,12 +48,11 @@ public class MainForm extends javax.swing.JFrame {
                 out.println();
                 out.println();
             }
-
         }
 
     }
 
-    public static HashTable<Integer, Employee> open(Scanner in, HashSet<Integer> usedEmployeeNums, JList listEmployees, DefaultListModel listModel) {
+    public HashTable<Integer, Employee> open(Scanner in) {
 
         HashTable<Integer, Employee> employees = new HashTable<>();
         int empNumber;
@@ -70,7 +75,7 @@ public class MainForm extends javax.swing.JFrame {
                 double annualSalary;
                 annualSalary = in.nextDouble();
 
-                FullTimeEmployee employee = new FullTimeEmployee(empNumber, sex, fName, lName, annualSalary, deductionsRate);
+                FullTimeEmployee employee = new FullTimeEmployee(empNumber, sex.equals("f"), fName, lName, annualSalary, deductionsRate);
                 employees.add(empNumber, employee);
             } else if (type.equals("p")) {
                 double hourlyWage, hoursWorkedPerWeek;
@@ -78,7 +83,7 @@ public class MainForm extends javax.swing.JFrame {
                 hourlyWage = in.nextDouble();
                 hoursWorkedPerWeek = in.nextDouble();
                 weeksPerYear = in.nextInt();
-                PartTimeEmployee employee = new PartTimeEmployee(empNumber, sex, fName, lName, hourlyWage, deductionsRate, hoursWorkedPerWeek, weeksPerYear);
+                PartTimeEmployee employee = new PartTimeEmployee(empNumber, sex.equals("f"), fName, lName, hourlyWage, deductionsRate, hoursWorkedPerWeek, weeksPerYear);
                 employees.add(empNumber, employee);
             }
 
@@ -114,9 +119,9 @@ public class MainForm extends javax.swing.JFrame {
         maleRadio = new javax.swing.JRadioButton();
         femaleRadio = new javax.swing.JRadioButton();
         firstNameBox = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        fNameLabel = new javax.swing.JLabel();
+        lNameLabel = new javax.swing.JLabel();
+        deductionsRateLabel = new javax.swing.JLabel();
         partTimeRadio = new javax.swing.JRadioButton();
         fullTimeRadio = new javax.swing.JRadioButton();
         lastNameBox = new javax.swing.JTextField();
@@ -125,7 +130,7 @@ public class MainForm extends javax.swing.JFrame {
         hoursWorkedLabel = new javax.swing.JLabel();
         weeksWorkedLabel = new javax.swing.JLabel();
         grossAnnualSalaryLabel = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        netAnnualSalaryLabel = new javax.swing.JLabel();
         hourlyWageBox = new javax.swing.JTextField();
         hoursWorkedBox = new javax.swing.JTextField();
         weeksWorkedBox = new javax.swing.JTextField();
@@ -134,7 +139,6 @@ public class MainForm extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         newFile = new javax.swing.JMenuItem();
-        openFile = new javax.swing.JMenuItem();
         saveFile = new javax.swing.JMenuItem();
         exitForm = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
@@ -143,6 +147,7 @@ public class MainForm extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("EmployeeDatabase");
+        setMinimumSize(new java.awt.Dimension(470, 430));
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
@@ -151,15 +156,22 @@ public class MainForm extends javax.swing.JFrame {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
             }
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
         });
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         applyButton.setText("Apply");
+        applyButton.setEnabled(false);
         applyButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 applyButtonActionPerformed(evt);
             }
         });
+        getContentPane().add(applyButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(206, 336, -1, -1));
 
+        listEmployees.setModel(listModel);
         listEmployees.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 listEmployeesValueChanged(evt);
@@ -167,81 +179,134 @@ public class MainForm extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(listEmployees);
 
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(18, 22, 64, 337));
+
         sexGroup.add(maleRadio);
         maleRadio.setText("Male");
+        maleRadio.setEnabled(false);
+        getContentPane().add(maleRadio, new org.netbeans.lib.awtextra.AbsoluteConstraints(239, 111, -1, -1));
 
         sexGroup.add(femaleRadio);
         femaleRadio.setText("Female");
+        femaleRadio.setEnabled(false);
         femaleRadio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 femaleRadioActionPerformed(evt);
             }
         });
+        getContentPane().add(femaleRadio, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 111, -1, -1));
+        femaleRadio.getAccessibleContext().setAccessibleName("Onna");
 
+        firstNameBox.setEnabled(false);
         firstNameBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 firstNameBoxActionPerformed(evt);
             }
         });
+        getContentPane().add(firstNameBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(239, 22, 80, -1));
 
-        jLabel1.setText("First Name:");
+        fNameLabel.setText("First Name:");
+        fNameLabel.setEnabled(false);
+        getContentPane().add(fNameLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 25, -1, -1));
 
-        jLabel2.setText("Last Name:");
+        lNameLabel.setText("Last Name:");
+        lNameLabel.setEnabled(false);
+        getContentPane().add(lNameLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(181, 49, -1, -1));
 
-        jLabel3.setText("Deductions Rate:");
+        deductionsRateLabel.setText("Deductions Rate:");
+        deductionsRateLabel.setEnabled(false);
+        getContentPane().add(deductionsRateLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(152, 75, -1, -1));
 
         typeGroup.add(partTimeRadio);
         partTimeRadio.setText("Part Time");
+        partTimeRadio.setEnabled(false);
         partTimeRadio.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 partTimeRadioStateChanged(evt);
             }
         });
+        partTimeRadio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                partTimeRadioActionPerformed(evt);
+            }
+        });
+        getContentPane().add(partTimeRadio, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 130, -1, -1));
 
         typeGroup.add(fullTimeRadio);
         fullTimeRadio.setText("Full Time");
+        fullTimeRadio.setEnabled(false);
+        fullTimeRadio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fullTimeRadioActionPerformed(evt);
+            }
+        });
+        getContentPane().add(fullTimeRadio, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 130, -1, -1));
+
+        lastNameBox.setEnabled(false);
+        getContentPane().add(lastNameBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(239, 46, 80, -1));
+
+        deductionsRateBox.setEnabled(false);
+        getContentPane().add(deductionsRateBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(239, 72, 80, -1));
 
         hourlyWageLabel.setText("Hourly Wage: ");
+        hourlyWageLabel.setEnabled(false);
+        getContentPane().add(hourlyWageLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 160, -1, -1));
 
         hoursWorkedLabel.setText("Hours per Week: ");
+        hoursWorkedLabel.setEnabled(false);
+        getContentPane().add(hoursWorkedLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 190, -1, -1));
 
         weeksWorkedLabel.setText("Weeks per Year: ");
+        weeksWorkedLabel.setEnabled(false);
+        getContentPane().add(weeksWorkedLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(152, 222, -1, -1));
 
         grossAnnualSalaryLabel.setText("Gross Annual Salary:");
+        grossAnnualSalaryLabel.setEnabled(false);
+        getContentPane().add(grossAnnualSalaryLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 270, -1, -1));
 
-        jLabel8.setText("Net Annual Salary:");
+        netAnnualSalaryLabel.setText("Net Annual Salary:");
+        netAnnualSalaryLabel.setEnabled(false);
+        getContentPane().add(netAnnualSalaryLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 300, -1, -1));
 
+        hourlyWageBox.setEnabled(false);
         hourlyWageBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hourlyWageBoxActionPerformed(evt);
             }
         });
+        getContentPane().add(hourlyWageBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 160, 80, -1));
 
+        hoursWorkedBox.setEnabled(false);
         hoursWorkedBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hoursWorkedBoxActionPerformed(evt);
             }
         });
+        getContentPane().add(hoursWorkedBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 190, 80, -1));
 
+        weeksWorkedBox.setEnabled(false);
         weeksWorkedBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 weeksWorkedBoxActionPerformed(evt);
             }
         });
+        getContentPane().add(weeksWorkedBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 222, 80, -1));
 
-        grossSalaryBox.setEditable(false);
+        grossSalaryBox.setEnabled(false);
         grossSalaryBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 grossSalaryBoxActionPerformed(evt);
             }
         });
+        getContentPane().add(grossSalaryBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 270, 80, -1));
 
-        netSalaryBox.setEditable(false);
+        netSalaryBox.setEnabled(false);
         netSalaryBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 netSalaryBoxActionPerformed(evt);
             }
         });
+        getContentPane().add(netSalaryBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 300, 80, -1));
 
         jMenu1.setText("File");
 
@@ -255,19 +320,9 @@ public class MainForm extends javax.swing.JFrame {
         });
         jMenu1.add(newFile);
 
-        openFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        openFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/employeesdatabase/page_paste.png"))); // NOI18N
-        openFile.setText("Open");
-        openFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openFileActionPerformed(evt);
-            }
-        });
-        jMenu1.add(openFile);
-
-        saveFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        saveFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         saveFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/employeesdatabase/page_save.png"))); // NOI18N
-        saveFile.setText("Save As");
+        saveFile.setText("Save");
         saveFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveFileActionPerformed(evt);
@@ -311,158 +366,30 @@ public class MainForm extends javax.swing.JFrame {
 
         setJMenuBar(jMenuBar1);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(64, 64, 64)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel8)
-                    .addComponent(grossAnnualSalaryLabel)
-                    .addComponent(weeksWorkedLabel)
-                    .addComponent(hoursWorkedLabel)
-                    .addComponent(hourlyWageLabel)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(deductionsRateBox, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(hourlyWageBox, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(firstNameBox, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(applyButton)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(lastNameBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(hoursWorkedBox, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(weeksWorkedBox, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(grossSalaryBox, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(netSalaryBox, javax.swing.GroupLayout.Alignment.LEADING)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(partTimeRadio)
-                            .addComponent(maleRadio))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(femaleRadio)
-                            .addComponent(fullTimeRadio))))
-                .addContainerGap(108, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(firstNameBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(4, 4, 4)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(lastNameBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(deductionsRateBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(19, 19, 19)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(maleRadio)
-                            .addComponent(femaleRadio))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(partTimeRadio)
-                            .addComponent(fullTimeRadio))
-                        .addGap(3, 3, 3)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(hourlyWageLabel)
-                            .addComponent(hourlyWageBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(hoursWorkedLabel)
-                            .addComponent(hoursWorkedBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(weeksWorkedLabel)
-                            .addComponent(weeksWorkedBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(applyButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(grossAnnualSalaryLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(grossSalaryBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel8)
-                            .addComponent(netSalaryBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(35, Short.MAX_VALUE))
-        );
-
-        femaleRadio.getAccessibleContext().setAccessibleName("Onna");
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void newFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newFileActionPerformed
-        applyButton.setText("av");        // TODO add your handling code here:
+        employees = new HashTable<>();
+        usedEmployeeNums = new HashSet<>();
     }//GEN-LAST:event_newFileActionPerformed
-    DefaultListModel listModel = new DefaultListModel();
-    HashSet<Integer> usedEmployeeNums = new HashSet<>();
-    Scanner fileIn = null;
-    String fileName = null;
-    File file = null;
-    PrintWriter fileOut = null;
-    HashTable<Integer, Employee> employees = new HashTable<>();
+    
+    private void saveFile() {
+        PrintWriter fileOut = null;
+        try {
+            fileOut = new PrintWriter(new FileWriter(file));
 
-    private void openFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileActionPerformed
-        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            file = fileChooser.getSelectedFile();
-            setTitle("EmployeeDatabase (" + file.getName() + ")");
-            try {
-                fileIn = new Scanner(file);
-                employees = open(fileIn, usedEmployeeNums, listEmployees, listModel);
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                if (fileIn != null) {
-                    fileIn.close();
-                }
+            archive(employees, usedEmployeeNums, fileOut);
+        } catch (IOException ex) {
+            Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (fileOut != null) {
+                fileOut.close();
             }
-
-            System.out.println(file.getPath());
-        } else {
-            // TODO remove av    
-            System.out.println("AV");
         }
-
-    }//GEN-LAST:event_openFileActionPerformed
-
+    }
     private void exitFormActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitFormActionPerformed
-        if (file != null) {
-            if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-                file = fileChooser.getSelectedFile();
-
-                try {
-                    fileOut = new PrintWriter(new FileWriter(file));
-
-                    archive(employees, usedEmployeeNums, fileOut);
-                } catch (IOException ex) {
-                    Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
-                } finally {
-                    if (fileOut != null) {
-                        fileOut.close();
-                    }
-                }
-
-                System.out.println(file.getPath());
-            } else {
-                System.out.println("AV");
-            }
-        }
+        saveFile();
         System.exit(0);
     }//GEN-LAST:event_exitFormActionPerformed
 
@@ -470,27 +397,7 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        if (file != null) {
-            if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-                file = fileChooser.getSelectedFile();
-
-                try {
-                    fileOut = new PrintWriter(new FileWriter(file));
-
-                    archive(employees, usedEmployeeNums, fileOut);
-                } catch (IOException ex) {
-                    Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
-                } finally {
-                    if (fileOut != null) {
-                        fileOut.close();
-                    }
-                }
-
-                System.out.println(file.getPath());
-            } else {
-                System.out.println("AV");
-            }
-        }
+        saveFile();
     }//GEN-LAST:event_formWindowClosing
 
     private void femaleRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_femaleRadioActionPerformed
@@ -498,25 +405,24 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_femaleRadioActionPerformed
 
     private void listEmployeesValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listEmployeesValueChanged
-        if (listEmployees.getSelectedValue()!=null){
+        for (Component i : getContentPane().getComponents())
+            if (i != listEmployees) {
+                i.setEnabled(listEmployees.getSelectedValue()!=null);
+            }
+        
+        if (listEmployees.getSelectedValue() != null) {
             partTimeRadio.setSelected(false);
             fullTimeRadio.setSelected(false);
             Employee used = employees.get((Integer) listEmployees.getSelectedValue());
             firstNameBox.setText(used.getfName());
             lastNameBox.setText(used.getlName());
 
-            deductionsRateBox.setText(Double.toString(used.getDeductionsRate()));
+            deductionsRateBox.setText(String.format("%.2f", used.getDeductionsRate()));
 
-            String sex = used.getSex();
-            if (sex.charAt(0) == 'm') {
-                femaleRadio.setSelected(false);
-                maleRadio.setSelected(true);
-            } else {
-                femaleRadio.setSelected(true);
-                maleRadio.setSelected(false);
-            }
+            femaleRadio.setSelected(used.getSex());
+            maleRadio.setSelected(!used.getSex());
+            
             if (used instanceof PartTimeEmployee) {
-                
                 partTimeRadio.setSelected(true);
                 fullTimeRadio.setSelected(false);
                 hourlyWageLabel.setText("Hourly Wage: ");
@@ -526,14 +432,12 @@ public class MainForm extends javax.swing.JFrame {
                 hoursWorkedBox.setVisible(true);
                 weeksWorkedBox.setVisible(true);
                 grossSalaryBox.setEditable(false);
-                hourlyWageBox.setText(Double.toString(((PartTimeEmployee) used).getHourlyWage()));
+                hourlyWageBox.setText(String.format("%.2f", ((PartTimeEmployee) used).getHourlyWage()));
                 hoursWorkedBox.setText(Double.toString(((PartTimeEmployee) used).getHrsPerWeek()));
                 weeksWorkedBox.setText(Integer.toString(((PartTimeEmployee) used).getWeeksPerYear()));
-                grossSalaryBox.setText(Double.toString(((PartTimeEmployee) used).getAnnualGrossPay()));
-                netSalaryBox.setText(Double.toString(((PartTimeEmployee) used).getAnnualNetPay()));
-
+                grossSalaryBox.setText(String.format("%.2f", ((PartTimeEmployee) used).getAnnualGrossPay()));
+                netSalaryBox.setText(String.format("%.2f", ((PartTimeEmployee) used).getAnnualNetPay()));
             } else {
-
                 partTimeRadio.setSelected(false);
                 fullTimeRadio.setSelected(true);
                 hourlyWageLabel.setText("");
@@ -543,10 +447,11 @@ public class MainForm extends javax.swing.JFrame {
                 hoursWorkedBox.setVisible(false);
                 weeksWorkedBox.setVisible(false);
                 grossSalaryBox.setEditable(true);
-                grossSalaryBox.setText(Double.toString(((FullTimeEmployee) used).getYearlySalary()));
-                netSalaryBox.setText(Double.toString(((FullTimeEmployee) used).getNetYearlySalary()));
-
+                grossSalaryBox.setText(String.format("%.2f", ((FullTimeEmployee) used).getYearlySalary()));
+                netSalaryBox.setText(String.format("%.2f", ((FullTimeEmployee) used).getNetYearlySalary()));
             }
+        } else {
+            
         }
 
 
@@ -559,48 +464,27 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_firstNameBoxActionPerformed
 
     private void saveFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileActionPerformed
-        if (file != null) {
-            if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-                file = fileChooser.getSelectedFile();
-
-                try {
-                    fileOut = new PrintWriter(new FileWriter(file));
-
-                    archive(employees, usedEmployeeNums, fileOut);
-                } catch (IOException ex) {
-                    Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
-                } finally {
-                    if (fileOut != null) {
-                        fileOut.close();
-                    }
-                }
-
-                System.out.println(file.getPath());
-            } else {
-                System.out.println("AV");
-            }
-        }
-
-
+        saveFile();
     }//GEN-LAST:event_saveFileActionPerformed
 
     private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
         Employee used = employees.get((Integer) listEmployees.getSelectedValue());
         used.setfName(firstNameBox.getText());
         used.setlName(lastNameBox.getText());
-        used.setSex(maleRadio.isSelected() ? "m" : "f");
+        used.setSex(femaleRadio.isSelected());
         used.setDeductionsRate(Double.parseDouble(deductionsRateBox.getText()));
         if (used instanceof PartTimeEmployee) {
             ((PartTimeEmployee) used).setHourlyWage(Double.parseDouble(hourlyWageBox.getText()));
             ((PartTimeEmployee) used).setHrsPerWeek(Double.parseDouble(hoursWorkedBox.getText()));
             ((PartTimeEmployee) used).setWeeksPerYear(Integer.parseInt(weeksWorkedBox.getText()));
         } else {
+
             ((FullTimeEmployee) used).setYearlySalary(Double.parseDouble(grossSalaryBox.getText()));
         }
         int tempIndex = listEmployees.getSelectedIndex();
         listEmployees.clearSelection();
         listEmployees.setSelectedIndex(tempIndex);
-      
+
     }//GEN-LAST:event_applyButtonActionPerformed
 
     private void hourlyWageBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hourlyWageBoxActionPerformed
@@ -623,30 +507,81 @@ public class MainForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_netSalaryBoxActionPerformed
 
+    @SuppressWarnings("empty-statement")
     private void addItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addItemActionPerformed
         Random r = new Random();
         int i;
-        do{
-            i = r.nextInt(1000000);
-        }while(usedEmployeeNums.contains(i));
+        while (usedEmployeeNums.contains(i = r.nextInt(1000000))) ;
         usedEmployeeNums.add(i);
         PartTimeEmployee emp = new PartTimeEmployee(i);
-        employees.add(i,emp);
-        listModel.add(usedEmployeeNums.size()-1, i);
-        listEmployees.setSelectedIndex(usedEmployeeNums.size()-1);
+        employees.add(i, emp);
+        listModel.add(usedEmployeeNums.size() - 1, i);
+        listEmployees.setSelectedIndex(usedEmployeeNums.size() - 1);
     }//GEN-LAST:event_addItemActionPerformed
 
     private void removeItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeItemActionPerformed
-        
+
         System.out.println(listEmployees.getSelectedValue());
-        employees.remove((Integer)listEmployees.getSelectedValue());
+        employees.remove((Integer) listEmployees.getSelectedValue());
         listModel.removeElement(listEmployees.getSelectedValue());
-        
+
     }//GEN-LAST:event_removeItemActionPerformed
 
     private void partTimeRadioStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_partTimeRadioStateChanged
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_partTimeRadioStateChanged
+
+    private void fullTimeRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fullTimeRadioActionPerformed
+        hourlyWageLabel.setText("");
+        hoursWorkedLabel.setText("");
+        weeksWorkedLabel.setText("");
+        hourlyWageBox.setVisible(false);
+        hoursWorkedBox.setVisible(false);
+        weeksWorkedBox.setVisible(false);
+        grossSalaryBox.setEditable(true);
+        grossSalaryBox.setText("0.00");
+        netSalaryBox.setText("0.00");
+        int key = (int) listEmployees.getSelectedValue();
+        employees.replace(key, new FullTimeEmployee(key));
+    }//GEN-LAST:event_fullTimeRadioActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException ex) {
+                Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        Scanner fileIn = null;
+        try {
+            fileIn = new Scanner(file);
+            employees = open(fileIn);
+        } catch (IOException ex) {
+            Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (fileIn != null)
+                fileIn.close();
+        }
+    }//GEN-LAST:event_formWindowOpened
+
+    private void partTimeRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_partTimeRadioActionPerformed
+        hourlyWageLabel.setText("Hourly Wage: ");
+        hoursWorkedLabel.setText("Hours per Week: ");
+        weeksWorkedLabel.setText("Weeks per Year: ");
+        hourlyWageBox.setVisible(true);
+        hoursWorkedBox.setVisible(true);
+        weeksWorkedBox.setVisible(true);
+        grossSalaryBox.setEditable(false);
+        hourlyWageBox.setText("0.00");
+        hoursWorkedBox.setText("0");
+        weeksWorkedBox.setText("0");
+        grossSalaryBox.setText("0.00");
+        netSalaryBox.setText("0.00");
+        int key = (int) listEmployees.getSelectedValue();
+        employees.replace(key, new PartTimeEmployee(key));
+    }//GEN-LAST:event_partTimeRadioActionPerformed
 
     /**
      * @param args the command line arguments
@@ -678,7 +613,9 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem addItem;
     private javax.swing.JButton applyButton;
     private javax.swing.JTextField deductionsRateBox;
+    private javax.swing.JLabel deductionsRateLabel;
     private javax.swing.JMenuItem exitForm;
+    private javax.swing.JLabel fNameLabel;
     private javax.swing.JRadioButton femaleRadio;
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JTextField firstNameBox;
@@ -689,21 +626,18 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JLabel hourlyWageLabel;
     private javax.swing.JTextField hoursWorkedBox;
     private javax.swing.JLabel hoursWorkedLabel;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JLabel lNameLabel;
     private javax.swing.JTextField lastNameBox;
     private javax.swing.JList listEmployees;
     private javax.swing.JRadioButton maleRadio;
+    private javax.swing.JLabel netAnnualSalaryLabel;
     private javax.swing.JTextField netSalaryBox;
     private javax.swing.JMenuItem newFile;
-    private javax.swing.JMenuItem openFile;
     private javax.swing.JRadioButton partTimeRadio;
     private javax.swing.JMenuItem removeItem;
     private javax.swing.JMenuItem saveFile;
@@ -712,143 +646,4 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JTextField weeksWorkedBox;
     private javax.swing.JLabel weeksWorkedLabel;
     // End of variables declaration//GEN-END:variables
-}
-
-abstract class Employee {
-
-    protected int empNumber;
-    protected String sex, fName, lName;
-    protected double deductionsRate;
-
-    public void setEmpNumber(int empNumber) {
-        this.empNumber = empNumber;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-
-    public void setfName(String fName) {
-        this.fName = fName;
-    }
-
-    public void setlName(String lName) {
-        this.lName = lName;
-    }
-
-    public void setDeductionsRate(double deductionsRate) {
-        this.deductionsRate = deductionsRate;
-    }
-
-    public double getDeductionsRate() {
-        return deductionsRate;
-    }
-
-    public int getEmpNumber() {
-        return empNumber;
-    }
-
-    public String getfName() {
-        return fName;
-    }
-
-    public String getlName() {
-        return lName;
-    }
-
-    public String getSex() {
-        return sex;
-    }
-}
-
-class FullTimeEmployee extends Employee {
-
-    public double getNetYearlySalary() {
-        return ((1 - deductionsRate / 100) * yearlySalary);
-    }
-    private double yearlySalary, netYearlySalary;
-
-    public FullTimeEmployee(int empNumber, String sex, String fName, String lName, double yearlySalary, double deductionsRate) {
-        this.empNumber = empNumber;
-        this.sex = sex;
-        this.fName = fName;
-        this.lName = lName;
-
-        this.yearlySalary = yearlySalary;
-        this.deductionsRate = deductionsRate;
-        netYearlySalary = ((1 - deductionsRate / 100) * yearlySalary);
-    }
-
-    public double getYearlySalary() {
-        return yearlySalary;
-    }
-
-    public void setYearlySalary(double yearlySalary) {
-        this.yearlySalary = yearlySalary;
-    }
-}
-
-class PartTimeEmployee extends Employee {
-
-    private double hourlyWage, hrsPerWeek, annualGrossPay, annualNetPay;
-    private int weeksPerYear;
-
-    public void setHourlyWage(double hourlyWage) {
-        this.hourlyWage = hourlyWage;
-    }
-
-    public void setHrsPerWeek(double hrsPerWeek) {
-        this.hrsPerWeek = hrsPerWeek;
-    }
-
-    public void setAnnualGrossPay(double annualGrossPay) {
-        this.annualGrossPay = annualGrossPay;
-    }
-
-    public void setAnnualNetPay(double annualNetPay) {
-        this.annualNetPay = annualNetPay;
-    }
-
-    public void setWeeksPerYear(int weeksPerYear) {
-        this.weeksPerYear = weeksPerYear;
-    }
-
-    public double getAnnualGrossPay() {
-        return hourlyWage * hrsPerWeek * weeksPerYear;
-    }
-
-    public double getAnnualNetPay() {
-        return (1 - deductionsRate / 100) * (hourlyWage * hrsPerWeek * weeksPerYear);
-    }
-
-    public double getHourlyWage() {
-        return hourlyWage;
-    }
-
-    public double getHrsPerWeek() {
-        return hrsPerWeek;
-    }
-
-    public int getWeeksPerYear() {
-        return weeksPerYear;
-    }
-
-    public PartTimeEmployee(int empNumber, String sex, String fName, String lName, double hourlyWage, double deductionsRate, double hrsPerWeek, int weeksPerYear) {
-        this.empNumber = empNumber;
-        this.sex = sex;
-        this.fName = fName;
-        this.lName = lName;
-
-        this.hourlyWage = hourlyWage;
-        this.deductionsRate = deductionsRate;
-        this.hrsPerWeek = hrsPerWeek;
-        this.weeksPerYear = weeksPerYear;
-        annualGrossPay = hourlyWage * hrsPerWeek * weeksPerYear;
-        annualNetPay = (1 - deductionsRate / 100) * annualGrossPay;
-
-    }
-    public PartTimeEmployee(int empNumber){
-            this.empNumber = empNumber;
-            this.sex = "m";
-    }
 }

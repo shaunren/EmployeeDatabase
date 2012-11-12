@@ -3,12 +3,6 @@
  * and open the template in the editor.
  */
 package employeesdatabase;
-
-/**
- *
- * @author 544304
- */
-
 import java.util.*;
 
 /**
