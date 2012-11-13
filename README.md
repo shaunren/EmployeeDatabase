@@ -20,7 +20,6 @@ A lot.
 Todo
 ----
 
-* remove useless methods that i dont know how to delete
 * documentation
 
 
