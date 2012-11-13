@@ -21,7 +21,7 @@ public class MainForm extends javax.swing.JFrame {
     HashSet<Integer> usedEmployeeNums = new HashSet<>();
     File file = new File("database.txt");
     HashTable<Integer, Employee> employees = new HashTable<>();
-    
+
     public static void archive(HashTable<Integer, Employee> employees, HashSet<Integer> usedEmployeeNums, PrintWriter out) {
         for (int i : usedEmployeeNums) {
             if (employees.contains(i)) {
@@ -150,14 +150,11 @@ public class MainForm extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(470, 430));
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosed(java.awt.event.WindowEvent evt) {
-                formWindowClosed(evt);
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
             }
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
-            }
-            public void windowOpened(java.awt.event.WindowEvent evt) {
-                formWindowOpened(evt);
             }
         });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -189,20 +186,10 @@ public class MainForm extends javax.swing.JFrame {
         sexGroup.add(femaleRadio);
         femaleRadio.setText("Female");
         femaleRadio.setEnabled(false);
-        femaleRadio.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                femaleRadioActionPerformed(evt);
-            }
-        });
         getContentPane().add(femaleRadio, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 111, -1, -1));
         femaleRadio.getAccessibleContext().setAccessibleName("Onna");
 
         firstNameBox.setEnabled(false);
-        firstNameBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                firstNameBoxActionPerformed(evt);
-            }
-        });
         getContentPane().add(firstNameBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(239, 22, 80, -1));
 
         fNameLabel.setText("First Name:");
@@ -220,11 +207,6 @@ public class MainForm extends javax.swing.JFrame {
         typeGroup.add(partTimeRadio);
         partTimeRadio.setText("Part Time");
         partTimeRadio.setEnabled(false);
-        partTimeRadio.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                partTimeRadioStateChanged(evt);
-            }
-        });
         partTimeRadio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 partTimeRadioActionPerformed(evt);
@@ -269,43 +251,18 @@ public class MainForm extends javax.swing.JFrame {
         getContentPane().add(netAnnualSalaryLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 300, -1, -1));
 
         hourlyWageBox.setEnabled(false);
-        hourlyWageBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                hourlyWageBoxActionPerformed(evt);
-            }
-        });
         getContentPane().add(hourlyWageBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 160, 80, -1));
 
         hoursWorkedBox.setEnabled(false);
-        hoursWorkedBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                hoursWorkedBoxActionPerformed(evt);
-            }
-        });
         getContentPane().add(hoursWorkedBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 190, 80, -1));
 
         weeksWorkedBox.setEnabled(false);
-        weeksWorkedBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                weeksWorkedBoxActionPerformed(evt);
-            }
-        });
         getContentPane().add(weeksWorkedBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 222, 80, -1));
 
         grossSalaryBox.setEnabled(false);
-        grossSalaryBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                grossSalaryBoxActionPerformed(evt);
-            }
-        });
         getContentPane().add(grossSalaryBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 270, 80, -1));
 
         netSalaryBox.setEnabled(false);
-        netSalaryBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                netSalaryBoxActionPerformed(evt);
-            }
-        });
         getContentPane().add(netSalaryBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 300, 80, -1));
 
         jMenu1.setText("File");
@@ -373,7 +330,7 @@ public class MainForm extends javax.swing.JFrame {
         employees = new HashTable<>();
         usedEmployeeNums = new HashSet<>();
     }//GEN-LAST:event_newFileActionPerformed
-    
+
     private void saveFile() {
         PrintWriter fileOut = null;
         try {
@@ -393,23 +350,17 @@ public class MainForm extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_exitFormActionPerformed
 
-    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
-    }//GEN-LAST:event_formWindowClosed
-
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         saveFile();
     }//GEN-LAST:event_formWindowClosing
 
-    private void femaleRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_femaleRadioActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_femaleRadioActionPerformed
-
     private void listEmployeesValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listEmployeesValueChanged
-        for (Component i : getContentPane().getComponents())
+        for (Component i : getContentPane().getComponents()) {
             if (i != listEmployees) {
-                i.setEnabled(listEmployees.getSelectedValue()!=null);
+                i.setEnabled(listEmployees.getSelectedValue() != null);
             }
-        
+        }
+
         if (listEmployees.getSelectedValue() != null) {
             partTimeRadio.setSelected(false);
             fullTimeRadio.setSelected(false);
@@ -421,7 +372,7 @@ public class MainForm extends javax.swing.JFrame {
 
             femaleRadio.setSelected(used.getSex());
             maleRadio.setSelected(!used.getSex());
-            
+
             if (used instanceof PartTimeEmployee) {
                 partTimeRadio.setSelected(true);
                 fullTimeRadio.setSelected(false);
@@ -451,17 +402,12 @@ public class MainForm extends javax.swing.JFrame {
                 netSalaryBox.setText(String.format("%.2f", ((FullTimeEmployee) used).getNetYearlySalary()));
             }
         } else {
-            
         }
 
 
 
 
     }//GEN-LAST:event_listEmployeesValueChanged
-
-    private void firstNameBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_firstNameBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_firstNameBoxActionPerformed
 
     private void saveFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileActionPerformed
         saveFile();
@@ -487,26 +433,6 @@ public class MainForm extends javax.swing.JFrame {
 
     }//GEN-LAST:event_applyButtonActionPerformed
 
-    private void hourlyWageBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hourlyWageBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_hourlyWageBoxActionPerformed
-
-    private void hoursWorkedBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hoursWorkedBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_hoursWorkedBoxActionPerformed
-
-    private void weeksWorkedBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_weeksWorkedBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_weeksWorkedBoxActionPerformed
-
-    private void grossSalaryBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grossSalaryBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_grossSalaryBoxActionPerformed
-
-    private void netSalaryBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_netSalaryBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_netSalaryBoxActionPerformed
-
     @SuppressWarnings("empty-statement")
     private void addItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addItemActionPerformed
         Random r = new Random();
@@ -526,10 +452,6 @@ public class MainForm extends javax.swing.JFrame {
         listModel.removeElement(listEmployees.getSelectedValue());
 
     }//GEN-LAST:event_removeItemActionPerformed
-
-    private void partTimeRadioStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_partTimeRadioStateChanged
-        
-    }//GEN-LAST:event_partTimeRadioStateChanged
 
     private void fullTimeRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fullTimeRadioActionPerformed
         hourlyWageLabel.setText("");
@@ -553,7 +475,7 @@ public class MainForm extends javax.swing.JFrame {
                 Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         Scanner fileIn = null;
         try {
             fileIn = new Scanner(file);
@@ -561,8 +483,9 @@ public class MainForm extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            if (fileIn != null)
+            if (fileIn != null) {
                 fileIn.close();
+            }
         }
     }//GEN-LAST:event_formWindowOpened
 
