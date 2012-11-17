@@ -21,7 +21,8 @@ public class MainForm extends javax.swing.JFrame {
     HashSet<Integer> usedEmployeeNums = new HashSet<>();
     File file = new File("database.txt");
     HashTable<Integer, Employee> employees = new HashTable<>();
-
+    Random r = new Random();
+        
     public static void archive(HashTable<Integer, Employee> employees, HashSet<Integer> usedEmployeeNums, PrintWriter out) {
         for (int i : usedEmployeeNums) {
             if (employees.contains(i)) {
@@ -435,11 +436,11 @@ public class MainForm extends javax.swing.JFrame {
 
     @SuppressWarnings("empty-statement")
     private void addItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addItemActionPerformed
-        Random r = new Random();
         int i;
-        while (usedEmployeeNums.contains(i = r.nextInt(1000000))) ;
+        while (usedEmployeeNums.contains(i = r.nextInt(1000000)));
         usedEmployeeNums.add(i);
         PartTimeEmployee emp = new PartTimeEmployee(i);
+        emp.setSex(r.nextBoolean()); // to avoid sexist constructor
         employees.add(i, emp);
         listModel.add(usedEmployeeNums.size() - 1, i);
         listEmployees.setSelectedIndex(usedEmployeeNums.size() - 1);
