@@ -20,8 +20,8 @@ A lot.
 Todo
 ----
 
-* remove useless methods that i dont know how to delete
 * documentation
+* should probably fix that public static listEmployees shit
 
 
 Authors
