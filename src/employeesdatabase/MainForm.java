@@ -19,11 +19,12 @@ public class MainForm extends javax.swing.JFrame {
 
     DefaultListModel listModel = new DefaultListModel();
     HashSet<Integer> usedEmployeeNums = new HashSet<>();
+    static SearchItemForm  s;
     File file = new File("database.txt");
-    HashTable<Integer, Employee> employees = new HashTable<>();
+    public static HashTable<Integer, Employee> employees = new HashTable<>();
     Random r = new Random();
-        
-    public static void archive(HashTable<Integer, Employee> employees, HashSet<Integer> usedEmployeeNums, PrintWriter out) {
+    //Method responsible to writing the current contents of database to file database.txt
+    public static void archive(HashTable<Integer, Employee> employees, HashSet<Integer> usedEmployeeNums, PrintWriter out) { 
         for (int i : usedEmployeeNums) {
             if (employees.contains(i)) {
                 Employee e = employees.get(i);
@@ -52,7 +53,7 @@ public class MainForm extends javax.swing.JFrame {
         }
 
     }
-
+    //Resposible for opening the database format and writing it to the table
     public HashTable<Integer, Employee> open(Scanner in) {
 
         HashTable<Integer, Employee> employees = new HashTable<>();
@@ -145,6 +146,7 @@ public class MainForm extends javax.swing.JFrame {
         jMenu2 = new javax.swing.JMenu();
         addItem = new javax.swing.JMenuItem();
         removeItem = new javax.swing.JMenuItem();
+        searchMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("EmployeeDatabase");
@@ -208,21 +210,11 @@ public class MainForm extends javax.swing.JFrame {
         typeGroup.add(partTimeRadio);
         partTimeRadio.setText("Part Time");
         partTimeRadio.setEnabled(false);
-        partTimeRadio.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                partTimeRadioActionPerformed(evt);
-            }
-        });
         getContentPane().add(partTimeRadio, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 130, -1, -1));
 
         typeGroup.add(fullTimeRadio);
         fullTimeRadio.setText("Full Time");
         fullTimeRadio.setEnabled(false);
-        fullTimeRadio.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fullTimeRadioActionPerformed(evt);
-            }
-        });
         getContentPane().add(fullTimeRadio, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 130, -1, -1));
 
         lastNameBox.setEnabled(false);
@@ -320,18 +312,29 @@ public class MainForm extends javax.swing.JFrame {
         });
         jMenu2.add(removeItem);
 
+        searchMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
+        searchMenuItem.setText("Search");
+        searchMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu2.add(searchMenuItem);
+
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    //Clears the database
     private void newFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newFileActionPerformed
+        listModel.clear();
         employees = new HashTable<>();
         usedEmployeeNums = new HashSet<>();
+        
     }//GEN-LAST:event_newFileActionPerformed
-
+    //saveFile mainly handles exceptions with regards to creating a printwriter to write the database to file
     private void saveFile() {
         PrintWriter fileOut = null;
         try {
@@ -346,15 +349,16 @@ public class MainForm extends javax.swing.JFrame {
             }
         }
     }
+    //Saves database and exits the form when the exit menu item is clicked
     private void exitFormActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitFormActionPerformed
         saveFile();
         System.exit(0);
     }//GEN-LAST:event_exitFormActionPerformed
-
+    //Saves the database on close
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         saveFile();
     }//GEN-LAST:event_formWindowClosing
-
+    //Handles changes on the employees jlist. updates all textfields and radiobuttons
     private void listEmployeesValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listEmployeesValueChanged
         for (Component i : getContentPane().getComponents()) {
             if (i != listEmployees) {
@@ -409,11 +413,11 @@ public class MainForm extends javax.swing.JFrame {
 
 
     }//GEN-LAST:event_listEmployeesValueChanged
-
+    //Saves the file when save menu item is pressed
     private void saveFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileActionPerformed
         saveFile();
     }//GEN-LAST:event_saveFileActionPerformed
-
+    //Writes to the database the changes to employee fields when the apply button is pressed
     private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
         Employee used = employees.get((Integer) listEmployees.getSelectedValue());
         used.setfName(firstNameBox.getText());
@@ -435,6 +439,7 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_applyButtonActionPerformed
 
     @SuppressWarnings("empty-statement")
+    //Adds an employee with a random employees number to the hashtable when add button in the edit menu is pressed
     private void addItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addItemActionPerformed
         int i;
         while (usedEmployeeNums.contains(i = r.nextInt(1000000)));
@@ -445,7 +450,7 @@ public class MainForm extends javax.swing.JFrame {
         listModel.add(usedEmployeeNums.size() - 1, i);
         listEmployees.setSelectedIndex(usedEmployeeNums.size() - 1);
     }//GEN-LAST:event_addItemActionPerformed
-
+     //Removes selected employee from the hashtable.
     private void removeItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeItemActionPerformed
 
         System.out.println(listEmployees.getSelectedValue());
@@ -453,21 +458,7 @@ public class MainForm extends javax.swing.JFrame {
         listModel.removeElement(listEmployees.getSelectedValue());
 
     }//GEN-LAST:event_removeItemActionPerformed
-
-    private void fullTimeRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fullTimeRadioActionPerformed
-        hourlyWageLabel.setText("");
-        hoursWorkedLabel.setText("");
-        weeksWorkedLabel.setText("");
-        hourlyWageBox.setVisible(false);
-        hoursWorkedBox.setVisible(false);
-        weeksWorkedBox.setVisible(false);
-        grossSalaryBox.setEditable(true);
-        grossSalaryBox.setText("0.00");
-        netSalaryBox.setText("0.00");
-        int key = (int) listEmployees.getSelectedValue();
-        employees.replace(key, new FullTimeEmployee(key));
-    }//GEN-LAST:event_fullTimeRadioActionPerformed
-
+    //Open the database file (database.txt) when the program starts
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         if (!file.exists()) {
             try {
@@ -489,23 +480,10 @@ public class MainForm extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_formWindowOpened
-
-    private void partTimeRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_partTimeRadioActionPerformed
-        hourlyWageLabel.setText("Hourly Wage: ");
-        hoursWorkedLabel.setText("Hours per Week: ");
-        weeksWorkedLabel.setText("Weeks per Year: ");
-        hourlyWageBox.setVisible(true);
-        hoursWorkedBox.setVisible(true);
-        weeksWorkedBox.setVisible(true);
-        grossSalaryBox.setEditable(false);
-        hourlyWageBox.setText("0.00");
-        hoursWorkedBox.setText("0");
-        weeksWorkedBox.setText("0");
-        grossSalaryBox.setText("0.00");
-        netSalaryBox.setText("0.00");
-        int key = (int) listEmployees.getSelectedValue();
-        employees.replace(key, new PartTimeEmployee(key));
-    }//GEN-LAST:event_partTimeRadioActionPerformed
+    //Shows search form when search is pressed
+    private void searchMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchMenuItemActionPerformed
+        s.setVisible(true);
+    }//GEN-LAST:event_searchMenuItemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -528,7 +506,8 @@ public class MainForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-
+                s =  new SearchItemForm();
+                s.setVisible(false);
                 new MainForm().setVisible(true);
             }
         });
@@ -557,7 +536,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JLabel lNameLabel;
     private javax.swing.JTextField lastNameBox;
-    private javax.swing.JList listEmployees;
+    public static javax.swing.JList listEmployees;
     private javax.swing.JRadioButton maleRadio;
     private javax.swing.JLabel netAnnualSalaryLabel;
     private javax.swing.JTextField netSalaryBox;
@@ -565,6 +544,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JRadioButton partTimeRadio;
     private javax.swing.JMenuItem removeItem;
     private javax.swing.JMenuItem saveFile;
+    private javax.swing.JMenuItem searchMenuItem;
     private javax.swing.ButtonGroup sexGroup;
     private javax.swing.ButtonGroup typeGroup;
     private javax.swing.JTextField weeksWorkedBox;

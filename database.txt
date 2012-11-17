@@ -1,0 +1,36 @@
+474245 m null null 0.0 p
+0.0 0.0 0 
+
+549538 f null null 0.0 p
+0.0 0.0 0 
+
+14732 m null null 0.0 p
+0.0 0.0 0 
+
+434016 m null null 0.0 p
+0.0 0.0 0 
+
+160778 m null null 0.0 p
+0.0 0.0 0 
+
+627607 f null null 0.0 p
+0.0 0.0 0 
+
+196497 m null null 0.0 p
+0.0 0.0 0 
+
+159954 f null null 0.0 p
+0.0 0.0 0 
+
+289717 m null null 0.0 p
+0.0 0.0 0 
+
+880474 m null null 0.0 p
+0.0 0.0 0 
+
+361926 f null null 0.0 p
+0.0 0.0 0 
+
+653782 f null null 0.0 p
+0.0 0.0 0 
+
