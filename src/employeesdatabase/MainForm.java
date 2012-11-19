@@ -458,12 +458,13 @@ public class MainForm extends javax.swing.JFrame {
         listModel.add(usedEmployeeNums.size() - 1, i); //Add the new employee to the listModel
         listEmployees.setSelectedIndex(usedEmployeeNums.size() - 1); //Set the selected employee to the added one
     }//GEN-LAST:event_addItemActionPerformed
-     //Removes selected employee from the hashtable.
+    //Removes selected employee from the hashtable.
     private void removeItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeItemActionPerformed
-        usedEmployeeNums.remove((Integer) listEmployees.getSelectedValue()); //Remove employee num from used num set
-        employees.remove((Integer) listEmployees.getSelectedValue()); //Remove employee from the hashtable
-        listModel.removeElement(listEmployees.getSelectedValue()); //Remove employee from the listmodel
-        
+        if (listEmployees.getSelectedIndex() != -1) { //if something is selected
+            usedEmployeeNums.remove((Integer) listEmployees.getSelectedValue()); //Remove employee num from used num set
+            employees.remove((Integer) listEmployees.getSelectedValue()); //Remove employee from the hashtable
+            listModel.removeElement(listEmployees.getSelectedValue()); //Remove employee from the listmodel
+        }
     }//GEN-LAST:event_removeItemActionPerformed
     //Open the database file (database.txt) when the program starts
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
@@ -484,6 +485,7 @@ public class MainForm extends javax.swing.JFrame {
         } finally {
             if (fileIn != null) {
                 fileIn.close(); //Close the scanner when done reading
+                s.setListEmployees(listEmployees);
             }
         }
     }//GEN-LAST:event_formWindowOpened

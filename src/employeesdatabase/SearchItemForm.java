@@ -7,17 +7,24 @@ package employeesdatabase;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
+import javax.swing.JList;
+
 /**
  *
  * @author Colin Lee
  */
 public class SearchItemForm extends javax.swing.JFrame {
 
+    private JList listEmployees;
     /**
      * Creates new form searchItemForm
      */
     public SearchItemForm() {
         initComponents();
+    }
+
+    public void setListEmployees(JList listEmp) {
+        listEmployees = listEmp;
     }
 
     /**
@@ -92,7 +99,7 @@ public class SearchItemForm extends javax.swing.JFrame {
     //Searches for employee num in text field, if not found, says not found, if found, selects it in the employee jlist
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
         if (MainForm.employees.contains(Integer.parseInt(searchField.getText()))) { //If the employee is in the database
-            MainForm.getListEmployees().setSelectedValue(Integer.parseInt(searchField.getText()), rootPaneCheckingEnabled); //Select it
+            listEmployees.setSelectedValue(Integer.parseInt(searchField.getText()), rootPaneCheckingEnabled); //Select it
             
         } else {
             searchFoundLabel.setText("Employee not found"); //Else change the label to employee not found
