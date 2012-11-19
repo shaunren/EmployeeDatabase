@@ -1,30 +1,18 @@
-474245 m null null 0.0 p
-0.0 0.0 0 
+160778 m John Smith 10.0 f
+14000.0
 
-549538 f null null 0.0 p
-4.0 0.0 0 
+196497 f Colin Lee 14.0 p
+24.0 16.0 32 
 
-434016 m null null 0.0 p
-0.0 0.0 0 
+880474 m Shaun Ren 5.0 f
+56000.0
 
-160778 f null null 0.0 f
-0.0
+289717 f Jurina Matsui 23.0 p
+56.0 23.0 25 
 
-196497 f null null 0.0 p
-0.0 0.0 0 
+361926 f Mayu Watanabe 10.5 f
+140000.0
 
-159954 f null null 0.0 p
-0.0 0.0 0 
-
-289717 m null null 0.0 p
-0.0 0.0 0 
-
-880474 m Colin Lee 5.0 f
-15000.0
-
-361926 f null null 0.0 p
-0.0 0.0 0 
-
-653782 f avl asdnull 40.0 p
-54.0 345.0 345 
+653782 f Ooshima Yuuko 10.0 p
+75.0 16.0 32 
 
