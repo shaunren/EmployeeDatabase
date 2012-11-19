@@ -16,31 +16,31 @@ import javax.swing.*;
  * @author 544304
  */
 public class MainForm extends javax.swing.JFrame {
-
+    //Global variables, required by methods
     DefaultListModel listModel = new DefaultListModel();
-    HashSet<Integer> usedEmployeeNums = new HashSet<>();
+    HashSet<Integer> usedEmployeeNums = new HashSet<>(); //Set containing all used employee numbers
     static SearchItemForm  s;
-    File file = new File("database.txt");
-    public static HashTable<Integer, Employee> employees = new HashTable<>();
-    Random r = new Random();
+    File file = new File("database.txt"); 
+    public static HashTable<Integer, Employee> employees = new HashTable<>(); //Employee database, filled at startup
+    Random r = new Random(); 
     //Method responsible to writing the current contents of database to file database.txt
     public static void archive(HashTable<Integer, Employee> employees, HashSet<Integer> usedEmployeeNums, PrintWriter out) { 
-        for (int i : usedEmployeeNums) {
-            if (employees.contains(i)) {
-                Employee e = employees.get(i);
-                out.print(e.getEmpNumber() + " ");
-                out.print(e.getSex() ? "f " : "m ");
-                out.print(e.getfName() + " ");
-                out.print(e.getlName() + " ");
-                out.print(e.getDeductionsRate() + " ");
-                if (e instanceof FullTimeEmployee) {
+        for (int i : usedEmployeeNums) { //Loops thorugh all used employee nums
+            if (employees.contains(i)) { 
+                Employee e = employees.get(i); //Creates a dummy employee to write information
+                out.print(e.getEmpNumber() + " "); //
+                out.print(e.getSex() ? "f " : "m "); // Writes basic employee information, shared between PTEs and FTEs
+                out.print(e.getfName() + " "); // 
+                out.print(e.getlName() + " "); //
+                out.print(e.getDeductionsRate() + " "); //
+                if (e instanceof FullTimeEmployee) { //Printing for FTEs
                     FullTimeEmployee fte = (FullTimeEmployee) (e);
                     out.print("f");
                     out.println();
                     out.print(fte.getYearlySalary());
                 } else if (e instanceof PartTimeEmployee) {
 
-                    PartTimeEmployee fte = (PartTimeEmployee) (e);
+                    PartTimeEmployee fte = (PartTimeEmployee) (e); //Printing for PTEs
                     out.print("p");
                     out.println();
                     out.print(fte.getHourlyWage() + " ");
@@ -57,41 +57,40 @@ public class MainForm extends javax.swing.JFrame {
     public HashTable<Integer, Employee> open(Scanner in) {
 
         HashTable<Integer, Employee> employees = new HashTable<>();
-        int empNumber;
+        int empNumber; //Creates variables for input data
         String sex, fName, lName, type;
         double deductionsRate;
         int i = 0;
         while (in.hasNext()) {
 
-            empNumber = in.nextInt();
+            empNumber = in.nextInt(); //Scans for text in the file database.txt
 
             usedEmployeeNums.add(empNumber);
-            listModel.add(i++, empNumber);
+            listModel.add(i++, empNumber); //Adds the employee number to the list to be used by the Jlist
             sex = in.next();
             fName = in.next();
 
             lName = in.next();
             deductionsRate = in.nextDouble();
             type = in.next();
-            if (type.equals("f")) {
+            if (type.equals("f")) { //Splits if fulltime employee detexted
                 double annualSalary;
                 annualSalary = in.nextDouble();
-
-                FullTimeEmployee employee = new FullTimeEmployee(empNumber, sex.equals("f"), fName, lName, annualSalary, deductionsRate);
-                employees.add(empNumber, employee);
+                FullTimeEmployee employee = new FullTimeEmployee(empNumber, sex.equals("f"), fName, lName, annualSalary, deductionsRate); //Constructs new FTE with data
+                employees.add(empNumber, employee); //Inserts employee into database
             } else if (type.equals("p")) {
                 double hourlyWage, hoursWorkedPerWeek;
                 int weeksPerYear;
                 hourlyWage = in.nextDouble();
                 hoursWorkedPerWeek = in.nextDouble();
                 weeksPerYear = in.nextInt();
-                PartTimeEmployee employee = new PartTimeEmployee(empNumber, sex.equals("f"), fName, lName, hourlyWage, deductionsRate, hoursWorkedPerWeek, weeksPerYear);
-                employees.add(empNumber, employee);
+                PartTimeEmployee employee = new PartTimeEmployee(empNumber, sex.equals("f"), fName, lName, hourlyWage, deductionsRate, hoursWorkedPerWeek, weeksPerYear); //Constructs new PTE with data
+                employees.add(empNumber, employee);//Inserts employee into database
             }
 
 
         }
-        listEmployees.setModel(listModel);
+        listEmployees.setModel(listModel); //Sets the JList model to the one used
         return employees;
     }
 
@@ -210,11 +209,21 @@ public class MainForm extends javax.swing.JFrame {
         typeGroup.add(partTimeRadio);
         partTimeRadio.setText("Part Time");
         partTimeRadio.setEnabled(false);
+        partTimeRadio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                partTimeRadioActionPerformed(evt);
+            }
+        });
         getContentPane().add(partTimeRadio, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 130, -1, -1));
 
         typeGroup.add(fullTimeRadio);
         fullTimeRadio.setText("Full Time");
         fullTimeRadio.setEnabled(false);
+        fullTimeRadio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fullTimeRadioActionPerformed(evt);
+            }
+        });
         getContentPane().add(fullTimeRadio, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 130, -1, -1));
 
         lastNameBox.setEnabled(false);
@@ -329,85 +338,84 @@ public class MainForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     //Clears the database
     private void newFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newFileActionPerformed
-        listModel.clear();
-        employees = new HashTable<>();
-        usedEmployeeNums = new HashSet<>();
+        listModel.clear(); //Clears listModel
+        employees = new HashTable<>(); //Replaces hashtable
+        usedEmployeeNums = new HashSet<>(); //Replaces old employee  number set
         
     }//GEN-LAST:event_newFileActionPerformed
     //saveFile mainly handles exceptions with regards to creating a printwriter to write the database to file
     private void saveFile() {
-        PrintWriter fileOut = null;
+        PrintWriter fileOut = null; 
         try {
-            fileOut = new PrintWriter(new FileWriter(file));
+            fileOut = new PrintWriter(new FileWriter(file)); //Tries to create a new file
 
-            archive(employees, usedEmployeeNums, fileOut);
+            archive(employees, usedEmployeeNums, fileOut); //archives to the file 
         } catch (IOException ex) {
             Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            if (fileOut != null) {
+            if (fileOut != null) { //Close the file once finished
                 fileOut.close();
             }
         }
     }
     //Saves database and exits the form when the exit menu item is clicked
     private void exitFormActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitFormActionPerformed
-        saveFile();
-        System.exit(0);
+        saveFile(); //Saves the file
+        System.exit(0); //Exits form
     }//GEN-LAST:event_exitFormActionPerformed
     //Saves the database on close
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         saveFile();
     }//GEN-LAST:event_formWindowClosing
-    //Handles changes on the employees jlist. updates all textfields and radiobuttons
+    //Handles changes on the employees jlist. updates all text fields and radio buttons
     private void listEmployeesValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listEmployeesValueChanged
-        for (Component i : getContentPane().getComponents()) {
+        for (Component i : getContentPane().getComponents()) { //Disables components when nothing selected, enables if selcted
             if (i != listEmployees) {
                 i.setEnabled(listEmployees.getSelectedValue() != null);
             }
-        }
+        } 
 
-        if (listEmployees.getSelectedValue() != null) {
-            partTimeRadio.setSelected(false);
+        if (listEmployees.getSelectedValue() != null) { //If an employee is selected
+            partTimeRadio.setSelected(false); 
             fullTimeRadio.setSelected(false);
-            Employee used = employees.get((Integer) listEmployees.getSelectedValue());
-            firstNameBox.setText(used.getfName());
+            Employee used = employees.get((Integer) listEmployees.getSelectedValue()); //Creates dummy employee off selected JList key
+            firstNameBox.setText(used.getfName()); //Gives text fields corresponding values from employee
             lastNameBox.setText(used.getlName());
 
-            deductionsRateBox.setText(String.format("%.2f", used.getDeductionsRate()));
+            deductionsRateBox.setText(String.format("%.2f", used.getDeductionsRate())); 
 
             femaleRadio.setSelected(used.getSex());
             maleRadio.setSelected(!used.getSex());
 
             if (used instanceof PartTimeEmployee) {
-                partTimeRadio.setSelected(true);
+                partTimeRadio.setSelected(true); //Change radio buttons to make sense
                 fullTimeRadio.setSelected(false);
-                hourlyWageLabel.setText("Hourly Wage: ");
+                hourlyWageLabel.setText("Hourly Wage: "); //Sets text for labels
                 hoursWorkedLabel.setText("Hours per Week: ");
                 weeksWorkedLabel.setText("Weeks per Year: ");
                 hourlyWageBox.setVisible(true);
                 hoursWorkedBox.setVisible(true);
                 weeksWorkedBox.setVisible(true);
-                grossSalaryBox.setEditable(false);
+                grossSalaryBox.setEditable(false); //Disables gross salary
                 hourlyWageBox.setText(String.format("%.2f", ((PartTimeEmployee) used).getHourlyWage()));
                 hoursWorkedBox.setText(Double.toString(((PartTimeEmployee) used).getHrsPerWeek()));
                 weeksWorkedBox.setText(Integer.toString(((PartTimeEmployee) used).getWeeksPerYear()));
                 grossSalaryBox.setText(String.format("%.2f", ((PartTimeEmployee) used).getAnnualGrossPay()));
                 netSalaryBox.setText(String.format("%.2f", ((PartTimeEmployee) used).getAnnualNetPay()));
             } else {
-                partTimeRadio.setSelected(false);
+                partTimeRadio.setSelected(false); //Change radio buttons to make sense
                 fullTimeRadio.setSelected(true);
-                hourlyWageLabel.setText("");
+                hourlyWageLabel.setText(""); //Sets text for labels
                 hoursWorkedLabel.setText("");
                 weeksWorkedLabel.setText("");
                 hourlyWageBox.setVisible(false);
                 hoursWorkedBox.setVisible(false);
                 weeksWorkedBox.setVisible(false);
-                grossSalaryBox.setEditable(true);
+                grossSalaryBox.setEditable(true); //Enables gross salary editing
                 grossSalaryBox.setText(String.format("%.2f", ((FullTimeEmployee) used).getYearlySalary()));
                 netSalaryBox.setText(String.format("%.2f", ((FullTimeEmployee) used).getNetYearlySalary()));
             }
-        } else {
-        }
+        } 
 
 
 
@@ -415,16 +423,16 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_listEmployeesValueChanged
     //Saves the file when save menu item is pressed
     private void saveFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileActionPerformed
-        saveFile();
+        saveFile(); //saves the file
     }//GEN-LAST:event_saveFileActionPerformed
     //Writes to the database the changes to employee fields when the apply button is pressed
     private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
-        Employee used = employees.get((Integer) listEmployees.getSelectedValue());
-        used.setfName(firstNameBox.getText());
+        Employee used = employees.get((Integer) listEmployees.getSelectedValue()); //Creates dummy employee
+        used.setfName(firstNameBox.getText()); //Sets the employee fields to the textboxes
         used.setlName(lastNameBox.getText());
         used.setSex(femaleRadio.isSelected());
         used.setDeductionsRate(Double.parseDouble(deductionsRateBox.getText()));
-        if (used instanceof PartTimeEmployee) {
+        if (used instanceof PartTimeEmployee) { //Handles PTEs
             ((PartTimeEmployee) used).setHourlyWage(Double.parseDouble(hourlyWageBox.getText()));
             ((PartTimeEmployee) used).setHrsPerWeek(Double.parseDouble(hoursWorkedBox.getText()));
             ((PartTimeEmployee) used).setWeeksPerYear(Integer.parseInt(weeksWorkedBox.getText()));
@@ -432,9 +440,9 @@ public class MainForm extends javax.swing.JFrame {
 
             ((FullTimeEmployee) used).setYearlySalary(Double.parseDouble(grossSalaryBox.getText()));
         }
-        int tempIndex = listEmployees.getSelectedIndex();
-        listEmployees.clearSelection();
-        listEmployees.setSelectedIndex(tempIndex);
+        int tempIndex = listEmployees.getSelectedIndex(); //Temporarily stores the current index
+        listEmployees.clearSelection(); //Clears the list selection
+        listEmployees.setSelectedIndex(tempIndex); //Reselects the employee with stored temp index
 
     }//GEN-LAST:event_applyButtonActionPerformed
 
@@ -442,25 +450,24 @@ public class MainForm extends javax.swing.JFrame {
     //Adds an employee with a random employees number to the hashtable when add button in the edit menu is pressed
     private void addItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addItemActionPerformed
         int i;
-        while (usedEmployeeNums.contains(i = r.nextInt(1000000)));
-        usedEmployeeNums.add(i);
-        PartTimeEmployee emp = new PartTimeEmployee(i);
+        while (usedEmployeeNums.contains(i = r.nextInt(1000000))); //While the employee number set contains the random, store i as the random
+        usedEmployeeNums.add(i); //Add the used to the used employee number set
+        PartTimeEmployee emp = new PartTimeEmployee(i); //Create a new PTE for editing
         emp.setSex(r.nextBoolean()); // to avoid sexist constructor
-        employees.add(i, emp);
-        listModel.add(usedEmployeeNums.size() - 1, i);
-        listEmployees.setSelectedIndex(usedEmployeeNums.size() - 1);
+        employees.add(i, emp); 
+        listModel.add(usedEmployeeNums.size() - 1, i); //Add the new employee to the listModel
+        listEmployees.setSelectedIndex(usedEmployeeNums.size() - 1); //Set the selected employee to the added one
     }//GEN-LAST:event_addItemActionPerformed
      //Removes selected employee from the hashtable.
     private void removeItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeItemActionPerformed
-
-        System.out.println(listEmployees.getSelectedValue());
-        employees.remove((Integer) listEmployees.getSelectedValue());
-        listModel.removeElement(listEmployees.getSelectedValue());
-
+        usedEmployeeNums.remove((Integer) listEmployees.getSelectedValue()); //Remove employee num from used num set
+        employees.remove((Integer) listEmployees.getSelectedValue()); //Remove employee from the hashtable
+        listModel.removeElement(listEmployees.getSelectedValue()); //Remove employee from the listmodel
+        
     }//GEN-LAST:event_removeItemActionPerformed
     //Open the database file (database.txt) when the program starts
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        if (!file.exists()) {
+        if (!file.exists()) { //If the file does not exist, create the file database.txt
             try {
                 file.createNewFile();
             } catch (IOException ex) {
@@ -468,23 +475,57 @@ public class MainForm extends javax.swing.JFrame {
             }
         }
 
-        Scanner fileIn = null;
+        Scanner fileIn = null; 
         try {
-            fileIn = new Scanner(file);
-            employees = open(fileIn);
+            fileIn = new Scanner(file);  //Creates a scanner at the file
+            employees = open(fileIn); //Reads text file into hashtable
         } catch (IOException ex) {
             Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             if (fileIn != null) {
-                fileIn.close();
+                fileIn.close(); //Close the scanner when done reading
             }
         }
     }//GEN-LAST:event_formWindowOpened
     //Shows search form when search is pressed
     private void searchMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchMenuItemActionPerformed
-        s.setVisible(true);
+        s.setVisible(true); //Open search form
     }//GEN-LAST:event_searchMenuItemActionPerformed
 
+    private void fullTimeRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fullTimeRadioActionPerformed
+        hourlyWageLabel.setText(""); //Sets interface components to make ense when FTE selected
+        hoursWorkedLabel.setText("");
+        weeksWorkedLabel.setText("");
+        hourlyWageBox.setVisible(false);
+        hoursWorkedBox.setVisible(false);
+        weeksWorkedBox.setVisible(false);
+        grossSalaryBox.setEditable(true);
+        netSalaryBox.setEditable(false);
+        grossSalaryBox.setText("0.00");
+        netSalaryBox.setText("0.00");
+        int key = (int) listEmployees.getSelectedValue();
+        employees.replace(key, new FullTimeEmployee(key)); //Replaces employee with a fulltime employee (in case it is parttime)
+    }//GEN-LAST:event_fullTimeRadioActionPerformed
+
+    private void partTimeRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_partTimeRadioActionPerformed
+        hourlyWageLabel.setText("Hourly Wage: "); //Sets interface components to make ense when PTE selected
+        hoursWorkedLabel.setText("Hours per Week: ");
+        weeksWorkedLabel.setText("Weeks per Year: ");
+        hourlyWageBox.setVisible(true);
+        hoursWorkedBox.setVisible(true);
+        weeksWorkedBox.setVisible(true);
+        grossSalaryBox.setEditable(false);
+        hourlyWageBox.setText("0.00");
+        hoursWorkedBox.setText("0");
+        weeksWorkedBox.setText("0");
+        grossSalaryBox.setText("0.00");
+        netSalaryBox.setText("0.00");
+        int key = (int) listEmployees.getSelectedValue();
+        employees.replace(key, new PartTimeEmployee(key));//Replaces employee with a parttime employee (in case it is fulltime)
+    }//GEN-LAST:event_partTimeRadioActionPerformed
+    public JList getListEmployees(){
+        return listEmployees; //Returns employee jlist for search box
+    }
     /**
      * @param args the command line arguments
      */
@@ -507,11 +548,12 @@ public class MainForm extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 s =  new SearchItemForm();
-                s.setVisible(false);
+                s.setVisible(false); //Sets the search form to invisible
                 new MainForm().setVisible(true);
             }
         });
     }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem addItem;
     private javax.swing.JButton applyButton;
@@ -536,7 +578,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JLabel lNameLabel;
     private javax.swing.JTextField lastNameBox;
-    public static javax.swing.JList listEmployees;
+    private javax.swing.JList listEmployees;
     private javax.swing.JRadioButton maleRadio;
     private javax.swing.JLabel netAnnualSalaryLabel;
     private javax.swing.JTextField netSalaryBox;
