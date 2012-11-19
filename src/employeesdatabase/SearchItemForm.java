@@ -91,11 +91,11 @@ public class SearchItemForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     //Searches for employee num in text field, if not found, says not found, if found, selects it in the employee jlist
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
-        if (MainForm.employees.contains(Integer.parseInt(searchField.getText()))) {
-            MainForm.listEmployees.setSelectedValue(Integer.parseInt(searchField.getText()), rootPaneCheckingEnabled);
+        if (MainForm.employees.contains(Integer.parseInt(searchField.getText()))) { //If the employee is in the database
+            MainForm.getListEmployees().setSelectedValue(Integer.parseInt(searchField.getText()), rootPaneCheckingEnabled); //Select it
             
         } else {
-            searchFoundLabel.setText("Employee not found");
+            searchFoundLabel.setText("Employee not found"); //Else change the label to employee not found
         }
         
     }//GEN-LAST:event_searchButtonActionPerformed
